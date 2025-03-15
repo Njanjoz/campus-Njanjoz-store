@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
+            color: #004d40;
+        }
+        header {
+            background-color: #00796b;
+            padding: 15px;
+            text-align: center;
+            color: white;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+        .container {
+            width: 90%;
+            margin: auto;
+            text-align: center;
+        }
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .product {
+            border: 1px solid #ccc;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 220px;
+        }
+        .product img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #0288d1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #0277bd;
+        }
+        .remove-btn {
+            background-color: #d32f2f;
+        }
+        .remove-btn:hover {
+            background-color: #b71c1c;
+        }
+        input, select {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+        }
+        #cart {
+            list-style-type: none;
+            padding: 0;
+        }
+        #cart li {
+            padding: 5px;
+            font-size: 1.1em;
+        }
+        #total {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        footer {
+            background-color: #00796b;
+            padding: 10px;
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <i class="fas fa-shopping-cart"></i> Campus Shop
+    </header>
+    <div class="container">
+        <h2>Our Products</h2>
+        <div class="products" id="products"></div>
+        
+        <h3>Cart</h3>
+        <ul id="cart"></ul>
+        <p id="total">Total: KES 0</p>
+        
+        <h3>Checkout</h3>
+        <input type="text" id="name" placeholder="Your Name" required>
+        <input type="text" id="phone" placeholder="Your Phone (+254...)" required>
+        <select id="location">
+            <option value="Gate ">Gate </option>
+            <option value="Fass">Fass</option>
+            <option value="Fedcos">Fedcos</option>
+            <option value="Buru">Buru</option>
+            <option value="Riverview">Riverview</option>
+            <option value="Njoks">Njoks</option>
+        </select>
+        <select id="pickupTime">
+            <option value="Morning">Morning</option>
+            <option value="Noon">Noon</option>
+            <option value="Evening">Evening</option>
+        </select>
+        <button onclick="sendOrder()">Submit Order</button>
+        <div id="status"></div>
+    </div>
+    
+    <footer>
+        &copy; Njanjo Companies Limited | All Rights Reserved
+    </footer>
+    
+    <script>
+        const products = [
+            { name: "Pen", price: 10, img: "pen.jpg" },
+            { name: "Notebook", price: 50, img: "notebook.jpg" },
+            { name: "Ruler", price: 20, img: "ruler.jpg" },
+            { name: "Pencil", price: 5, img: "pencil.jpg" },
+            { name: "Eraser", price: 8, img: "eraser.jpg" },
+            { name: "Sharpener", price: 12, img: "sharpener.jpg" },
+            { name: "A4 Paper (500 sheets)", price: 400, img: "a4paper.jpg" },
+            { name: "Scientific Calculator", price: 1500, img: "calculator.jpg" },
+            { name: "Stapler", price: 250, img: "stapler.jpg" },
+            { name: "Glue Stick", price: 80, img: "glue.jpg" }
+        ];
+        
+        let cart = [];
+        
+        function displayProducts() {
+            const productDiv = document.getElementById("products");
+            productDiv.innerHTML = "";
+            products.forEach((product, index) => {
+                productDiv.innerHTML += `<div class='product'>
+                    <img src='${product.img}' alt='${product.name}'>
+                    <p>${product.name} - KES ${product.price}</p>
+                    <button onclick='addToCart(${index})'>Add to Cart</button>
+                </div>`;
+            });
+        }
+        
+        function addToCart(index) {
+            cart.push(products[index]);
+            updateCart();
+        }
+        
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+        
+        function updateCart() {
+            const cartList = document.getElementById("cart");
+            const totalPrice = document.getElementById("total");
+            cartList.innerHTML = "";
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price;
+                cartList.innerHTML += `<li>${item.name} - KES ${item.price} <button class='remove-btn' onclick='removeFromCart(${index})'>Remove</button></li>`;
+            });
+            totalPrice.innerText = `Total: KES ${total}`;
+        }
+        
+        function sendOrder() {
+            const name = document.getElementById("name").value;
+            const phone = document.getElementById("phone").value;
+            const location = document.getElementById("location").value;
+            const pickupTime = document.getElementById("pickupTime").value;
+            const now = new Date().toLocaleString();
+            const message = `Order Details:\nName: ${name}\nPhone: ${phone}\nLocation: ${location}\nPickup Time: ${pickupTime}\nOrder Time: ${now}\nItems: ${cart.map(item => `${item.name} - KES ${item.price}`).join(", ")}`;
+            window.open(`https://api.whatsapp.com/send?phone=2540115988107&text=${encodeURIComponent(message)}`, '_blank');
+        }
+        
+        displayProducts();
+    </script>
+</body>
+</html>
